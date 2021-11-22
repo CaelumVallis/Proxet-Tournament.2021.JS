@@ -23,29 +23,29 @@ export const generateTeams = (filePath: string): Teams => {
 
   while (team1RemainingVehicles.length !== 0 || team2RemainingVehicles.length !== 0) {
 
+    const neededTeamPlayerIndex = (teamRemainingVehicles: number[]) => {
+      return sortedPlayers.findIndex((player, index) => {
+        const playerVehicleType = Number(player[2][0]);
+        if (!pickedPlayersIndexes.includes(index)) {
+          return teamRemainingVehicles.includes(playerVehicleType);
+        }
+      })
+    };
+
+    const selectPlayer = (team: string[], teamRemainingVehicles: number[], playerIndex: number) => {
+      if (playerIndex !== -1) {
+        team.push(sortedPlayers[playerIndex][0]);
+        pickedPlayersIndexes.push(playerIndex);
+        const indexOfAddedVehicleType = teamRemainingVehicles.indexOf(Number(sortedPlayers[playerIndex][2][0]));
+        if (indexOfAddedVehicleType !== -1) {
+          teamRemainingVehicles.splice(indexOfAddedVehicleType, 1);
+        }
+      }
+    };
+
+    selectPlayer(team1, team1RemainingVehicles,  neededTeamPlayerIndex(team1RemainingVehicles));
+    selectPlayer(team2, team2RemainingVehicles,  neededTeamPlayerIndex(team2RemainingVehicles));
   }
-  const neededTeamPlayerIndex = (teamRemainingVehicles: number[]) => {
-    return sortedPlayers.findIndex((player, index) => {
-      const playerVehicleType = Number(player[2][0]);
-      if (!pickedPlayersIndexes.includes(index)) {
-        return teamRemainingVehicles.includes(playerVehicleType);
-      }
-    })
-  };
-
-  const selectPlayer = (team: string[], teamRemainingVehicles: number[], playerIndex: number) => {
-    if (playerIndex !== -1) {
-      team.push(sortedPlayers[playerIndex][0]);
-      pickedPlayersIndexes.push(playerIndex);
-      const indexOfAddedVehicleType = teamRemainingVehicles.indexOf(Number(sortedPlayers[playerIndex][2][0]));
-      if (indexOfAddedVehicleType !== -1) {
-        teamRemainingVehicles.splice(indexOfAddedVehicleType, 1);
-      }
-    }
-  };
-
-  selectPlayer(team1, team1RemainingVehicles,  neededTeamPlayerIndex(team1RemainingVehicles));
-  selectPlayer(team2, team2RemainingVehicles,  neededTeamPlayerIndex(team2RemainingVehicles));
 
   return {
     team1,
